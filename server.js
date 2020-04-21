@@ -10,8 +10,18 @@ const mc = mysql.createPool({
     database: 'g_dcst1008_3'
 });
 const server = app.listen(process.env.PORT || 15004);
-//const server = require('http').createServer(app);
-const io = require('socket.io').listen(server);
+const server = require('https').createServer(app);
+const io = require('socket.io')(server, {
+    handlePreflightRequest: (req, res) => {
+        const headers = {
+            "Access-Control-Allow-Headers": "Content-Type, Authorization",
+            "Access-Control-Allow-Origin": req.headers.origin, //or the specific origin you want to give access to,
+            "Access-Control-Allow-Credentials": true
+        };
+        res.writeHead(200, headers);
+        res.end();
+    }
+})
 
 
 /*
