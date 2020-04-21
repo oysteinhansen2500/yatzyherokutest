@@ -108,7 +108,7 @@ socket.emit('subscribeToTimer', 1000);
 
   handleSubmit = async e => {
     e.preventDefault();
-    const response = await fetch('/api/world', {
+    const response = await fetch('http://87.248.16.163:15004/api/world', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -157,7 +157,7 @@ class ChangePassword extends Component {
     event.preventDefault();
     console.log(this.state);
     var newPass = bcrypt.hashSync(this.state.password, cookies.get('user').salt);
-    fetch(`/changePassword/${this.props.match.params.id}`, {
+    fetch(`http://87.248.16.163:15004/changePassword/${this.props.match.params.id}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -277,7 +277,7 @@ class LoginAuth extends Component {
 
     console.log("not done");
     this.state.password = bcrypt.hashSync(this.state.password, this.state.salt);
-    fetch('/api/authenticate', {
+    fetch('http://87.248.16.163:15004/api/authenticate', {
       method: 'POST',
       body: JSON.stringify({email: this.state.email, password: this.state.password}),
       headers: {
@@ -395,8 +395,8 @@ class Login extends Component {
     event.preventDefault();
     console.log(this.state);
     console.log("not done");
-
-    fetch('/api/login', {
+    console.log(JSON.stringify({email: this.state.email}))
+    fetch('http://87.248.16.163:15004/api/login', {
       method: 'POST',
       body: JSON.stringify({email: this.state.email}),
       headers: {
@@ -418,7 +418,7 @@ class Login extends Component {
             password: newPass
           }, function() {
             console.log(this.state);
-            fetch('/api/authenticate', {
+            fetch('http://87.248.16.163:15004/api/authenticate', {
               method: 'POST',
               body: JSON.stringify({email: this.state.email, password: this.state.password}),
               headers: {

@@ -315,7 +315,8 @@ app.post('/api/login', (req, res) => {
   mc.query(`SELECT salt FROM users WHERE username = (?)`, [req.body.email], function(err, results, fields){
     if(err) {console.log("err", err); throw err;}
     console.log(results);
-    return res.send(results);
+    res.json({msg: 'This is CORS-enabled for all origins!'})
+    //return res.send(results);
   })
 })
 
