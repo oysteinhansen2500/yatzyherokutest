@@ -11,22 +11,23 @@ const mc = mysql.createPool({
     password: '0u2ytjnl',
     database: 'g_dcst1008_3'
 });
-app.listen(process.env.PORT || 15004);
-const server = require('https').createServer(app);
-const io = require('socket.io')(server, {
-    handlePreflightRequest: (req, res) => {
-      console.log(req);
-        const headers = {
-            "Access-Control-Allow-Headers": "Content-Type, Authorization",
-            "Access-Control-Allow-Origin": 'http://testyatzyoy.herokuapp.com/', //or the specific origin you want to give access to,
-            "Access-Control-Allow-Credentials": true
-        };
-        res.writeHead(200, headers);
-        res.end();
-    }
-})
+//app.listen(process.env.PORT || 15004);
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
+server.listen(process.env.PORT || 15004);
+const whitelist = ['http://localhost:4200', 'http://testyatzyoy.herokuapp.com/'];
+const corsOptions = {
+  credentials: true, // This is important.
+  origin: (origin, callback) => {
+    console.log(origin);
+    if(whitelist.includes(origin))
+      return callback(null, true)
 
+      callback(new Error('Not allowed by CORS'));
+  }
+}
 
+app.use(cors(corsOptions));
 /*
 io.on('connection', (client) => {
   client.on('test', (test) => {

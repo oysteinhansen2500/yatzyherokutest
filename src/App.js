@@ -28,10 +28,8 @@ import {NavLink} from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import bcrypt from 'bcryptjs';
 import openSocket from 'socket.io-client';
-const socket = openSocket('http://87.248.16.163:15004', {
 
-      }
-);
+const socket = openSocket('http://87.248.16.163:15004');
 const cookies = new Cookies();
 
 class Home extends Component {
@@ -284,7 +282,7 @@ class LoginAuth extends Component {
       body: JSON.stringify({email: this.state.email, password: this.state.password}),
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'text/plain'
+        'Accept': 'application/json'
       }
     }).then((response) => response.json()).then((messages) => {
       console.log(messages);
@@ -403,7 +401,7 @@ class Login extends Component {
       body: JSON.stringify({email: this.state.email}),
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'text/plain'
+        'Accept': 'application/json'
       }
     }).then((response) => response.json()).then((messages) => {
       console.log(messages)
@@ -425,7 +423,7 @@ class Login extends Component {
               body: JSON.stringify({email: this.state.email, password: this.state.password}),
               headers: {
                 'Content-Type': 'application/json',
-                'Accept': 'text/plain'
+                'Accept': 'application/json'
               }
             }).then((response) => response.json()).then((messages) => {
               console.log(messages);
@@ -539,7 +537,7 @@ class Register extends Component {
         body: JSON.stringify(this.state),
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'text/plain'
+          'Accept': 'application/json'
         }
       }).then((response) => response.json()).then((messages) => {
         console.log(messages.redirectUrl);
