@@ -92,6 +92,7 @@ socket.emit('subscribeToTimer', 1000);
   }
 
   callApi = async () => {
+
     const response = await fetch('http://87.248.16.163:15004/ping');
     console.log(response);
     const body = await response.json();
@@ -111,7 +112,8 @@ socket.emit('subscribeToTimer', 1000);
     const response = await fetch('http://87.248.16.163:15004/api/world', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
       },
       body: JSON.stringify({post: this.state.post})
     });
@@ -427,6 +429,9 @@ class Login extends Component {
               }
             }).then((response) => response.json()).then((messages) => {
               console.log(messages);
+              if (!cookies.get('user')) {
+                cookies.set('user', {username: messages.username, password: messages.password, id: messages.id, salt: messages.salt, }, {path: '/'})
+              }
               console.log(messages.redirectUrl);
               if (messages.redirectUrl) {
                 this.props.history.push(messages.redirectUrl);

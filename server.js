@@ -15,7 +15,7 @@ const mc = mysql.createPool({
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 server.listen(process.env.PORT || 15004);
-const whitelist = ['http://localhost:3000', 'http://testyatzyoy.herokuapp.com/'];
+const whitelist = ['http://localhost:3000', 'http://testyatzyoy.herokuapp.com/', 'http://192.168.1.71:3000'];
 const corsOptions = {
   credentials: true, // This is important.
   origin: (origin, callback) => {
@@ -67,9 +67,10 @@ app.use(bodyParser())
 app.get('/ping', function (req, res) {
   var pong;
 mc.query('SELECT username FROM users', function(err, results, fields) {
+  console.log("get aids");
   if(err) throw err;
   pong=results;
-   return res.send(results);
+   return res.json({test: "test"});
 });
 
 
@@ -331,7 +332,11 @@ app.post('/api/authenticate', (req, res) => {
       console.log("pog");
       return res.status(200).cookie('user', results[0]).json({
             success:true,
-            redirectUrl: `../gamelist/${results[0].id}`
+            redirectUrl: `../gamelist/${results[0].id}`,
+            username: results[0].username,
+            password: results[0].password,
+            id: results[0].id,
+            salt: results[0].salt
         });
 
       /*json({
