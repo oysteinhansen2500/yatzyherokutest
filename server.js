@@ -3,6 +3,8 @@ const bodyParser = require('body-parser')
 const path = require('path');
 const app = express();
 const mysql = require('mysql');
+var cors = require('cors');
+app.use(cors());
 const mc = mysql.createPool({
     host: 'mysql-ait.stud.idi.ntnu.no',
     user: 'g_dcst1008_3',
