@@ -29,9 +29,7 @@ import Cookies from 'universal-cookie';
 import bcrypt from 'bcryptjs';
 import openSocket from 'socket.io-client';
 const socket = openSocket('http://87.248.16.163:15004', {
-extraHeaders: {
-        'Access-Control-Allow-Origin': '*'
-      }
+
       }
 );
 const cookies = new Cookies();

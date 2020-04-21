@@ -15,10 +15,10 @@ app.listen(process.env.PORT || 15004);
 const server = require('https').createServer(app);
 const io = require('socket.io')(server, {
     handlePreflightRequest: (req, res) => {
-
+      console.log(req);
         const headers = {
             "Access-Control-Allow-Headers": "Content-Type, Authorization",
-            "Access-Control-Allow-Origin": req.headers.origin, //or the specific origin you want to give access to,
+            "Access-Control-Allow-Origin": 'http://testyatzyoy.herokuapp.com/', //or the specific origin you want to give access to,
             "Access-Control-Allow-Credentials": true
         };
         res.writeHead(200, headers);
