@@ -15,7 +15,7 @@ const mc = mysql.createPool({
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 server.listen(process.env.PORT || 15004);
-const whitelist = ['http://localhost:4200', 'http://testyatzyoy.herokuapp.com/'];
+const whitelist = ['http://localhost:3000', 'http://testyatzyoy.herokuapp.com/'];
 const corsOptions = {
   credentials: true, // This is important.
   origin: (origin, callback) => {
@@ -310,13 +310,13 @@ app.get('/login/:id', (req, res) => {
 })
 
 app.post('/api/login', (req, res) => {
-  console.log("body", req.body);
+  console.log("body", req.body.email);
   console.log("req", req.params.id);
   mc.query(`SELECT salt FROM users WHERE username = (?)`, [req.body.email], function(err, results, fields){
     if(err) {console.log("err", err); throw err;}
     console.log(results);
-    res.json({msg: 'This is CORS-enabled for all origins!'})
-    //return res.send(results);
+
+    return res.send(results);
   })
 })
 

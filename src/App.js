@@ -59,7 +59,7 @@ socket.emit('subscribeToTimer', 1000);
   }
   onSubmit = (event) => {
     event.preventDefault();
-    fetch('/api/authenticate', {
+    fetch('http://87.248.16.163:15004/api/authenticate', {
       method: 'POST',
       body: JSON.stringify(this.state),
       headers: {
@@ -92,7 +92,7 @@ socket.emit('subscribeToTimer', 1000);
   }
 
   callApi = async () => {
-    const response = await fetch('/ping');
+    const response = await fetch('http://87.248.16.163:15004/ping');
     console.log(response);
     const body = await response.json();
     if (response.status !== 200)
@@ -251,7 +251,7 @@ class LoginAuth extends Component {
   callApi = async () => {
     console.log(cookies.get('user'));
 
-    const response = await fetch(`/login/${this.props.match.params.id}`);
+    const response = await fetch(`http://87.248.16.163:15004/login/${this.props.match.params.id}`);
     if (response.status !== 200) {
       throw Error(response.message);
     }
@@ -532,7 +532,7 @@ class Register extends Component {
       salt: salt,
       password: bcrypt.hashSync(this.state.password, salt)
     }, function() {
-      fetch('/api/register', {
+      fetch('http://87.248.16.163:15004/api/register', {
         method: 'POST',
         body: JSON.stringify(this.state),
         headers: {
@@ -645,7 +645,7 @@ class Gamelist extends Component {
     console.log(cookies.get('user'));
     let userAuth = cookies.get('user');
     console.log(userAuth);
-    const response = await fetch(`/gamelist/${this.props.match.params.id}`, {headers: userAuth});
+    const response = await fetch(`http://87.248.16.163:15004/gamelist/${this.props.match.params.id}`, {headers: userAuth});
     if (response.status !== 200) {
       throw Error(response.message);
     }
@@ -660,7 +660,7 @@ class Gamelist extends Component {
   onSubmit = (event) => {
     event.preventDefault();
     console.log("new game");
-    fetch(`/gamelist/${this.props.match.params.id}`, {
+    fetch(`http://87.248.16.163:15004/gamelist/${this.props.match.params.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -943,7 +943,7 @@ class GameDetails extends Component {
         }
         this.dice.terninger = [];
       }
-      fetch(`/storeattempt`, {
+      fetch(`http://87.248.16.163:15004/storeattempt`, {
         method: 'PUT',
         body: JSON.stringify({
           id: this.state.response[this.state.response[0].round].id,
@@ -1158,7 +1158,7 @@ class GameDetails extends Component {
 
     this.dice.uvalgt = this.dice.terninger.length;
 
-    fetch(`/storedice`, {
+    fetch(`http://87.248.16.163:15004/storedice`, {
       method: 'PUT',
       body: JSON.stringify({
         id: this.state.response[this.state.response[0].round].multiplayerid,
@@ -1179,7 +1179,7 @@ class GameDetails extends Component {
     this.dice.terninger.push(this.dice.savedDice[diceIndex.index])
     this.dice.savedDice.splice(diceIndex.index, 1);
     this.dice.uvalgt = this.dice.terninger.length;
-    fetch(`/storedice`, {
+    fetch(`http://87.248.16.163:15004/storedice`, {
       method: 'PUT',
       body: JSON.stringify({
         id: this.state.response[this.state.response[0].round].multiplayerid,
@@ -1207,7 +1207,7 @@ class GameDetails extends Component {
       this.dice.savedDice = [];
       this.dice.uvalgt = 5;
       console.log(this.dice.attempts);
-      fetch(`/game/${this.props.match.params.id}`, {
+      fetch(`http://87.248.16.163:15004/game/${this.props.match.params.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -1233,7 +1233,7 @@ class GameDetails extends Component {
 
   handleSubmit = async e => {
     e.preventDefault();
-    const response = await fetch(`/game/${this.props.match.params.id}`, {
+    const response = await fetch(`http://87.248.16.163:15004/game/${this.props.match.params.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -1247,7 +1247,7 @@ class GameDetails extends Component {
 
   callApi = async () => {
     let userAuth = cookies.get('user');
-    const response = await fetch(`/game/${this.props.match.params.id}`, {headers: userAuth});
+    const response = await fetch(`http://87.248.16.163:15004/game/${this.props.match.params.id}`, {headers: userAuth});
     console.log(response);
     const body = await response.json();
     if (response.status !== 200)
