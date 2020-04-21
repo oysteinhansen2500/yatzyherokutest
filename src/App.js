@@ -28,7 +28,7 @@ import {NavLink} from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import bcrypt from 'bcryptjs';
 import openSocket from 'socket.io-client';
-const socket = openSocket('http://87.248.16.163:8090');
+const socket = openSocket('http://87.248.16.163:15004');
 const cookies = new Cookies();
 
 class Home extends Component {

@@ -9,18 +9,9 @@ const mc = mysql.createPool({
     password: '0u2ytjnl',
     database: 'g_dcst1008_3'
 });
-const server = require('http').createServer(app);
-const io = require('socket.io')(server, {
-    handlePreflightRequest: (req, res) => {
-        const headers = {
-            "Access-Control-Allow-Headers": "Content-Type, Authorization",
-            "Access-Control-Allow-Origin": req.headers.origin, //or the specific origin you want to give access to,
-            "Access-Control-Allow-Credentials": true
-        };
-        res.writeHead(200, headers);
-        res.end();
-    }
-})
+const server = app.listen(process.env.PORT || 15004);
+//const server = require('http').createServer(app);
+const io = require('socket.io').listen(server);
 
 
 /*
@@ -54,7 +45,7 @@ io.on('connection', (client) => {
 
 
 
-io.listen(8090);
+
 
 
 app.use(express.static(path.join(__dirname, 'build')));
@@ -283,7 +274,7 @@ app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
-app.listen(process.env.PORT || 8080);
+
 
 
 app.get('/api/hello', (req, res) => {
