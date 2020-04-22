@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser')
 const path = require('path');
+var fs = require('fs');
 const app = express();
 const mysql = require('mysql');
 var cors = require('cors');
@@ -12,10 +13,11 @@ const mc = mysql.createPool({
     database: 'g_dcst1008_3'
 });
 //app.listen(process.env.PORT || 15004);
-const server = require('http').createServer(app);
+console.log(fs.readFileSync('server.key'));
+const server = require('https').createServer({key: fs.readFileSync('server.key'), cert: fs.readFileSync('server.cert')}, app);
 const io = require('socket.io')(server);
 server.listen(process.env.PORT || 15004);
-const whitelist = ['http://localhost:3000', 'http://testyatzyoy.herokuapp.com/', 'http://192.168.1.71:3000'];
+const whitelist = ['https://localhost:3000', 'https://testyatzyoy.herokuapp.com', 'https://192.168.1.71:3000'];
 const corsOptions = {
   credentials: true, // This is important.
   origin: (origin, callback) => {
@@ -70,7 +72,7 @@ mc.query('SELECT username FROM users', function(err, results, fields) {
   console.log("get aids");
   if(err) throw err;
   pong=results;
-   return res.json({test: "test"});
+   return res.send({test: "test"});
 });
 
 
@@ -161,7 +163,7 @@ app.get('/game/:id', function (req, res) {
   console.log(req.headers.email);
   mc.query(`SELECT player FROM scoreboards WHERE id = ?`, [req.params.id], function(err, results, fields) {
     console.log("resultat", results);
-
+    var reloadGame = false;
     if (results.length>0) {
 
     var playerID = results[0].player;
@@ -195,16 +197,20 @@ app.get('/game/:id', function (req, res) {
                   if (results3.length==0) {
                     mc.query(`INSERT INTO scoreboards (player, date, multiplayerid) VALUES (?, ?, ?)`, [results[0].id, results2[0].date, results2[0].multiplayerid]);
                     mc.query(`UPDATE multiplayergame SET playercount=playercount+1 WHERE id=(?)`, [results2[0].multiplayerid]);
+
+                    reloadGame=true;
                   }
                 })
 
             });
             mc.query('SELECT multiplayergame.round, users.username, multiplayergame.boardDice, multiplayergame.savedDice, scoreboards.id, scoreboards.player, scoreboards.ones, scoreboards.twos, scoreboards.threes, scoreboards.fours, scoreboards.fives, scoreboards.sixes, scoreboards.one_pair, scoreboards.two_pairs, scoreboards.triplet, scoreboards.four_of_a_kind, scoreboards.small_straight, scoreboards.large_straight, scoreboards.chance, scoreboards.yatzy, scoreboards.full_house, scoreboards.date, scoreboards.rounds, scoreboards.score, scoreboards.attempts, scoreboards.multiplayerid FROM scoreboards INNER JOIN users on scoreboards.player=users.id INNER JOIN multiplayergame on multiplayergame.id=scoreboards.multiplayerid WHERE multiplayerid=(?)', [req.params.id], function(err, results, fields) {
               if(err) throw err;
-              console.log("id from result", results);
-              console.log("emitting");
-
+              console.log("id from resultregister", results);
+              if (reloadGame == true) {
+                io.sockets.emit('reloadGame', "test");
+              }
               return res.send(results);
+
             })
 
 
@@ -274,13 +280,14 @@ app.put('/game/:id', function(req, res) {
   mc.query(`SELECT round, playercount FROM multiplayergame WHERE id=(?)`, [req.params.id], function(err2, results2, fields2){
     if (results2[0].round == results2[0].playercount-1) {
       mc.query(`UPDATE multiplayergame SET round = 0 WHERE id = (?)`, [req.params.id]);
+      io.sockets.emit('reloadGame', "test");
     } else{
     mc.query(`UPDATE multiplayergame SET round = round+1 WHERE id = (?)`, [req.params.id]);
     }
   });
 
   console.log("Inserted into scoreboard", req.body);
-        io.sockets.emit('reloadGame', "test");
+io.sockets.emit('reloadGame', "test");
 return res.send(results);
 });
 })

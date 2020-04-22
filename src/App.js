@@ -29,7 +29,7 @@ import Cookies from 'universal-cookie';
 import bcrypt from 'bcryptjs';
 import openSocket from 'socket.io-client';
 
-const socket = openSocket('http://87.248.16.163:15004');
+const socket = openSocket('https://87.248.16.163:15004');
 const cookies = new Cookies();
 
 class Home extends Component {
@@ -59,7 +59,7 @@ socket.emit('subscribeToTimer', 1000);
   }
   onSubmit = (event) => {
     event.preventDefault();
-    fetch('http://87.248.16.163:15004/api/authenticate', {
+    fetch('httpss://87.248.16.163:15004/api/authenticate', {
       method: 'POST',
       body: JSON.stringify(this.state),
       headers: {
@@ -93,7 +93,7 @@ socket.emit('subscribeToTimer', 1000);
 
   callApi = async () => {
 
-    const response = await fetch('http://87.248.16.163:15004/ping');
+    const response = await fetch('httpss://87.248.16.163:15004/ping');
     console.log(response);
     const body = await response.json();
     if (response.status !== 200)
@@ -109,7 +109,7 @@ socket.emit('subscribeToTimer', 1000);
 
   handleSubmit = async e => {
     e.preventDefault();
-    const response = await fetch('http://87.248.16.163:15004/api/world', {
+    const response = await fetch('https://87.248.16.163:15004/api/world', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -159,7 +159,7 @@ class ChangePassword extends Component {
     event.preventDefault();
     console.log(this.state);
     var newPass = bcrypt.hashSync(this.state.password, cookies.get('user').salt);
-    fetch(`http://87.248.16.163:15004/changePassword/${this.props.match.params.id}`, {
+    fetch(`https://87.248.16.163:15004/changePassword/${this.props.match.params.id}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -176,11 +176,11 @@ class ChangePassword extends Component {
 
   render() {
     return (<Card style={{
-        width: "35rem",
+        maxWidth: "35rem",
         margin: "auto"
       }}>
       <Navbar style={{
-          width: '35rem',
+          maxWidth: '35rem',
           margin: "auto"
         }} bg="light" expand="lg">
         <Navbar.Brand style={{
@@ -188,7 +188,7 @@ class ChangePassword extends Component {
           }} href="">Yatzy</Navbar.Brand>
       </Navbar>
       <Form style={{
-          width: "80%",
+          maxWidth: "80%",
           margin: "auto"
         }} onSubmit={this.onSubmit}>
         <Card.Title>Change your password</Card.Title>
@@ -253,7 +253,7 @@ class LoginAuth extends Component {
   callApi = async () => {
     console.log(cookies.get('user'));
 
-    const response = await fetch(`http://87.248.16.163:15004/login/${this.props.match.params.id}`);
+    const response = await fetch(`https://87.248.16.163:15004/login/${this.props.match.params.id}`);
     if (response.status !== 200) {
       throw Error(response.message);
     }
@@ -279,7 +279,7 @@ class LoginAuth extends Component {
 
     console.log("not done");
     this.state.password = bcrypt.hashSync(this.state.password, this.state.salt);
-    fetch('http://87.248.16.163:15004/api/authenticate', {
+    fetch('https://87.248.16.163:15004/api/authenticate', {
       method: 'POST',
       body: JSON.stringify({email: this.state.email, password: this.state.password}),
       headers: {
@@ -398,7 +398,7 @@ class Login extends Component {
     console.log(this.state);
     console.log("not done");
     console.log(JSON.stringify({email: this.state.email}))
-    fetch('http://87.248.16.163:15004/api/login', {
+    fetch('https://87.248.16.163:15004/api/login', {
       method: 'POST',
       body: JSON.stringify({email: this.state.email}),
       headers: {
@@ -420,7 +420,7 @@ class Login extends Component {
             password: newPass
           }, function() {
             console.log(this.state);
-            fetch('http://87.248.16.163:15004/api/authenticate', {
+            fetch('https://87.248.16.163:15004/api/authenticate', {
               method: 'POST',
               body: JSON.stringify({email: this.state.email, password: this.state.password}),
               headers: {
@@ -453,7 +453,7 @@ class Login extends Component {
   }
 
   render() {
-
+    cookies.remove('user', {path: '/'});
     return (<div>
 
       <Container>
@@ -537,7 +537,7 @@ class Register extends Component {
       salt: salt,
       password: bcrypt.hashSync(this.state.password, salt)
     }, function() {
-      fetch('http://87.248.16.163:15004/api/register', {
+      fetch('https://87.248.16.163:15004/api/register', {
         method: 'POST',
         body: JSON.stringify(this.state),
         headers: {
@@ -623,6 +623,7 @@ class Gamelist extends Component {
     cookies.remove('user', {path: '/'});
     console.log(cookies.get('user'));
     this.props.history.push('/login');
+
   }
   componentDidMount() {
     socket.on('cancer', result => {})
@@ -650,7 +651,7 @@ class Gamelist extends Component {
     console.log(cookies.get('user'));
     let userAuth = cookies.get('user');
     console.log(userAuth);
-    const response = await fetch(`http://87.248.16.163:15004/gamelist/${this.props.match.params.id}`, {headers: userAuth});
+    const response = await fetch(`https://87.248.16.163:15004/gamelist/${this.props.match.params.id}`, {headers: userAuth});
     if (response.status !== 200) {
       throw Error(response.message);
     }
@@ -665,7 +666,7 @@ class Gamelist extends Component {
   onSubmit = (event) => {
     event.preventDefault();
     console.log("new game");
-    fetch(`http://87.248.16.163:15004/gamelist/${this.props.match.params.id}`, {
+    fetch(`https://87.248.16.163:15004/gamelist/${this.props.match.params.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -678,13 +679,17 @@ class Gamelist extends Component {
 
   }
 
+  onJoin = (event) => {
+    this.props.history.push(`/game/${window.prompt("Please enter the game ID you would like to join")}`);
+  }
+
   render() {
     if (!this.state.response) {
       return (<p>still rendering</p>)
     } else {
       return (<div>
         <Container style={{
-            width: "36rem",
+            maxWidth: "36rem",
             paddingRight: 0
           }}>
           <Nav className="justify-content-end">
@@ -693,14 +698,14 @@ class Gamelist extends Component {
 
           </Nav>
           <Card style={{
-              width: "35rem",
+              maxWidth: "35rem",
               margin: "auto"
             }}>
 
 
 
             <Navbar style={{
-                width: '35rem',
+                maxWidth: '35rem',
                 margin: "auto"
               }} bg="light" expand="lg">
               <Navbar.Brand style={{
@@ -708,11 +713,14 @@ class Gamelist extends Component {
                 }} href="">Yatzy</Navbar.Brand>
             </Navbar>
             <Navbar style={{
-                width: '35rem',
+                maxWidth: '35rem',
                 margin: "auto"
               }} bg="light" expand="lg">
               <Button variant="outline-secondary" type="submit" value="Submit" onClick={this.onSubmit}>
                 Start a new game
+              </Button>
+              <Button variant="outline-secondary" type="submit" value="Submit" onClick={this.onJoin}>
+                Join a game
               </Button>
               <Button variant="outline-secondary" type="submit" value="Submit" href={"/changePassword/" + this.props.match.params.id}>
                 Change your password
@@ -853,6 +861,8 @@ class GameDetails extends Component {
       })
 
       socket.on('reloadGame', test => {
+        console.log("reloading", test);
+        this.componentDidMount();
         console.log("reloading");
         this.callApi().then(res => {
           console.log("res:", res);
@@ -948,7 +958,7 @@ class GameDetails extends Component {
         }
         this.dice.terninger = [];
       }
-      fetch(`http://87.248.16.163:15004/storeattempt`, {
+      fetch(`httpss://87.248.16.163:15004/storeattempt`, {
         method: 'PUT',
         body: JSON.stringify({
           id: this.state.response[this.state.response[0].round].id,
@@ -1156,6 +1166,7 @@ class GameDetails extends Component {
   }
 
   saveDice(diceIndex) {
+    if (cookies.get('user').id == this.state.response[this.state.response[0].round].player) {
     console.log(this.dice.attempts);
     var test = diceIndex.index;
     this.dice.savedDice.push(this.dice.terninger[diceIndex.index])
@@ -1163,7 +1174,7 @@ class GameDetails extends Component {
 
     this.dice.uvalgt = this.dice.terninger.length;
 
-    fetch(`http://87.248.16.163:15004/storedice`, {
+    fetch(`httpss://87.248.16.163:15004/storedice`, {
       method: 'PUT',
       body: JSON.stringify({
         id: this.state.response[this.state.response[0].round].multiplayerid,
@@ -1176,15 +1187,16 @@ class GameDetails extends Component {
 
     });
     this.calculateResult();
-
+  }
   }
   removeDice(diceIndex) {
+      if (cookies.get('user').id == this.state.response[this.state.response[0].round].player) {
     console.log(this.dice.attempts);
     var test = diceIndex.index;
     this.dice.terninger.push(this.dice.savedDice[diceIndex.index])
     this.dice.savedDice.splice(diceIndex.index, 1);
     this.dice.uvalgt = this.dice.terninger.length;
-    fetch(`http://87.248.16.163:15004/storedice`, {
+    fetch(`httpss://87.248.16.163:15004/storedice`, {
       method: 'PUT',
       body: JSON.stringify({
         id: this.state.response[this.state.response[0].round].multiplayerid,
@@ -1197,7 +1209,7 @@ class GameDetails extends Component {
 
     });
     this.calculateResult();
-
+}
   }
   saveRound(value) {
     this.updateVariable.player = cookies.get('user').id;
@@ -1212,7 +1224,7 @@ class GameDetails extends Component {
       this.dice.savedDice = [];
       this.dice.uvalgt = 5;
       console.log(this.dice.attempts);
-      fetch(`http://87.248.16.163:15004/game/${this.props.match.params.id}`, {
+      fetch(`httpss://87.248.16.163:15004/game/${this.props.match.params.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -1238,7 +1250,7 @@ class GameDetails extends Component {
 
   handleSubmit = async e => {
     e.preventDefault();
-    const response = await fetch(`http://87.248.16.163:15004/game/${this.props.match.params.id}`, {
+    const response = await fetch(`httpss://87.248.16.163:15004/game/${this.props.match.params.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -1252,7 +1264,7 @@ class GameDetails extends Component {
 
   callApi = async () => {
     let userAuth = cookies.get('user');
-    const response = await fetch(`http://87.248.16.163:15004/game/${this.props.match.params.id}`, {headers: userAuth});
+    const response = await fetch(`httpss://87.248.16.163:15004/game/${this.props.match.params.id}`, {headers: userAuth});
     console.log(response);
     const body = await response.json();
     if (response.status !== 200)
@@ -1310,8 +1322,8 @@ class GameDetails extends Component {
           <ListGroup>
             <Card style={{
                 background: "red",
-                height: "150px",
-                width: "40rem"
+                minHeight: "150px",
+                maxWidth: "40rem"
               }}>
               <Card.Title>Dice on board (These will be rerolled)</Card.Title>
               <Row>
@@ -1327,8 +1339,8 @@ class GameDetails extends Component {
 
             <Card style={{
                 background: "green",
-                height: "150px",
-                width: "40rem"
+                minHeight: "150px",
+                maxWidth: "40rem"
               }}>
               <Card.Title>Chosen dice (These won't be rerolled)</Card.Title>
 
@@ -1343,13 +1355,13 @@ class GameDetails extends Component {
             </Card>
           </ListGroup>
           <Card style={{
-              width: "100%",
+              maxWidth: "100%",
               display: "flex",
               justifyContent: "center"
             }}>
 
             <Card.Title style={{
-                width: "100%",
+                maxWidth: "100%",
                 display: "flex",
                 justifyContent: "center"
               }}>
@@ -1367,7 +1379,7 @@ class GameDetails extends Component {
           }}>
           <Button variant="outline-secondary" style={{
               margin: "auto",
-              width: "12.5rem"
+              maxWidth: "12.5rem"
             }} onClick={this.rollDice}>Roll dice, {this.state.response[this.state.response[0].round].attempts}
             attempts remaining</Button>
         </Card.Header>
