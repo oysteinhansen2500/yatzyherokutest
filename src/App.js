@@ -29,7 +29,7 @@ import Cookies from 'universal-cookie';
 import bcrypt from 'bcryptjs';
 import openSocket from 'socket.io-client';
 
-const socket = openSocket('https://87.248.16.163:15004');
+const socket = openSocket('http://87.248.16.163:15004');
 const cookies = new Cookies();
 
 class Home extends Component {
@@ -59,7 +59,7 @@ socket.emit('subscribeToTimer', 1000);
   }
   onSubmit = (event) => {
     event.preventDefault();
-    fetch('httpss://87.248.16.163:15004/api/authenticate', {
+    fetch('http://87.248.16.163:15004/api/authenticate', {
       method: 'POST',
       body: JSON.stringify(this.state),
       headers: {
@@ -93,23 +93,23 @@ socket.emit('subscribeToTimer', 1000);
 
   callApi = async () => {
 
-    const response = await fetch('httpss://87.248.16.163:15004/ping');
-    console.log(response);
+    const response = await fetch('http://87.248.16.163:15004/ping');
+
     const body = await response.json();
     if (response.status !== 200)
       throw Error(body.message);
 
-    console.log(body);
+
     return body;
   };
 
   logState = async () => {
-    console.log("state:", this.state.response);
+
   }
 
   handleSubmit = async e => {
     e.preventDefault();
-    const response = await fetch('https://87.248.16.163:15004/api/world', {
+    const response = await fetch('http://87.248.16.163:15004/api/world', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -118,7 +118,7 @@ socket.emit('subscribeToTimer', 1000);
       body: JSON.stringify({post: this.state.post})
     });
     const body = await response.text();
-    console.log(body);
+
     this.setState({responseToPost: body});
   };
 
@@ -157,17 +157,16 @@ class ChangePassword extends Component {
 
   onSubmit = (event) => {
     event.preventDefault();
-    console.log(this.state);
+
     var newPass = bcrypt.hashSync(this.state.password, cookies.get('user').salt);
-    fetch(`https://87.248.16.163:15004/changePassword/${this.props.match.params.id}`, {
+    fetch(`http://87.248.16.163:15004/changePassword/${this.props.match.params.id}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({id: this.props.match.params.id, password: newPass})
     }).then((response) => response.json()).then((messages) => {
-      console.log(messages.redirectUrl);
-      console.log("cookie:", cookies.get('user'));
+
       this.props.history.push(messages.redirectUrl);
       //this.props.history.push(`/gamelist/${this.props.match.params.id}`);
     });
@@ -227,9 +226,9 @@ class LoginAuth extends Component {
           console.log(this.state);
 }*/
   componentDidMount() {
-    console.log("calling api");
+
     this.callApi().then(res => {
-      console.log("res:", res[0].salt);
+
       this.setState({
         salt: res[0].salt
       }, function() {
@@ -237,23 +236,23 @@ class LoginAuth extends Component {
       });
 
     }).catch(err => {
-      console.log("You do not have access to this gamelist");
+
       var user = cookies.get('user');
-      console.log(err);
-      console.log(user);
+
+
 
       //  this.props.history.push(`/login/${this.props.match.params.id}`);
       //    this.componentDidMount()
 
     });
-    console.log(this.state.response);
+
 
   }
 
   callApi = async () => {
-    console.log(cookies.get('user'));
 
-    const response = await fetch(`https://87.248.16.163:15004/login/${this.props.match.params.id}`);
+
+    const response = await fetch(`http://87.248.16.163:15004/login/${this.props.match.params.id}`);
     if (response.status !== 200) {
       throw Error(response.message);
     }
@@ -261,7 +260,7 @@ class LoginAuth extends Component {
     const body = await response.json();
     if (response.status !== 200)
 
-      console.log(body);
+
     return body;
   };
 
@@ -269,17 +268,15 @@ class LoginAuth extends Component {
     const {value, name} = event.target;
 
     await this.setState({[name]: value});
-    console.log(this.state);
+
   }
 
   onSubmit = async (event) => {
     event.preventDefault();
 
-    console.log(this.state);
 
-    console.log("not done");
     this.state.password = bcrypt.hashSync(this.state.password, this.state.salt);
-    fetch('https://87.248.16.163:15004/api/authenticate', {
+    fetch('http://87.248.16.163:15004/api/authenticate', {
       method: 'POST',
       body: JSON.stringify({email: this.state.email, password: this.state.password}),
       headers: {
@@ -287,15 +284,14 @@ class LoginAuth extends Component {
         'Accept': 'application/json'
       }
     }).then((response) => response.json()).then((messages) => {
-      console.log(messages);
-      console.log(messages.redirectUrl);
+
       if (messages.redirectUrl) {
         this.props.history.push(messages.redirectUrl);
       }
 
     }).catch(err => {
-      console.log(err);
-      console.log("You do not have access to this gamelist");
+
+
       var user = cookies.get('user');
 
     });
@@ -390,15 +386,14 @@ class Login extends Component {
     const {value, name} = event.target;
 
     await this.setState({[name]: value});
-    console.log(this.state);
+
   }
 
   onSubmit = async (event) => {
     event.preventDefault();
-    console.log(this.state);
-    console.log("not done");
-    console.log(JSON.stringify({email: this.state.email}))
-    fetch('https://87.248.16.163:15004/api/login', {
+
+
+    fetch('http://87.248.16.163:15004/api/login', {
       method: 'POST',
       body: JSON.stringify({email: this.state.email}),
       headers: {
@@ -406,9 +401,9 @@ class Login extends Component {
         'Accept': 'application/json'
       }
     }).then((response) => response.json()).then((messages) => {
-      console.log(messages)
+
       if (messages.length < 1) {
-        console.log("less than 1");
+
         this.errorCode = "No user found matching these credentials";
         this.forceUpdate();
       } else {
@@ -419,8 +414,8 @@ class Login extends Component {
           this.setState({
             password: newPass
           }, function() {
-            console.log(this.state);
-            fetch('https://87.248.16.163:15004/api/authenticate', {
+
+            fetch('http://87.248.16.163:15004/api/authenticate', {
               method: 'POST',
               body: JSON.stringify({email: this.state.email, password: this.state.password}),
               headers: {
@@ -428,18 +423,18 @@ class Login extends Component {
                 'Accept': 'application/json'
               }
             }).then((response) => response.json()).then((messages) => {
-              console.log(messages);
+
               if (!cookies.get('user')) {
                 cookies.set('user', {username: messages.username, password: messages.password, id: messages.id, salt: messages.salt, }, {path: '/'})
               }
-              console.log(messages.redirectUrl);
+
               if (messages.redirectUrl) {
                 this.props.history.push(messages.redirectUrl);
               }
 
             }).catch(err => {
               console.log(err);
-              console.log("You do not have access to this gamelist");
+
               var user = cookies.get('user');
 
             });
@@ -531,13 +526,13 @@ class Register extends Component {
   onSubmit = (event) => {
     event.preventDefault();
     var salt = bcrypt.genSaltSync(10);
-    console.log(salt);
+
 
     this.setState({
       salt: salt,
       password: bcrypt.hashSync(this.state.password, salt)
     }, function() {
-      fetch('https://87.248.16.163:15004/api/register', {
+      fetch('http://87.248.16.163:15004/api/register', {
         method: 'POST',
         body: JSON.stringify(this.state),
         headers: {
@@ -545,8 +540,7 @@ class Register extends Component {
           'Accept': 'application/json'
         }
       }).then((response) => response.json()).then((messages) => {
-        console.log(messages.redirectUrl);
-        console.log("cookie:", cookies.get('user'));
+
         this.props.history.push(messages.redirectUrl);
       });
 
@@ -621,21 +615,20 @@ class Gamelist extends Component {
 
   logOut() {
     cookies.remove('user', {path: '/'});
-    console.log(cookies.get('user'));
+
     this.props.history.push('/login');
 
   }
   componentDidMount() {
     socket.on('cancer', result => {})
     this.callApi().then(res => {
-      console.log("res:", typeof(res));
+
       this.setState({response: res});
 
     }).catch(err => {
-      console.log("You do not have access to this gamelist");
+
       var user = cookies.get('user');
-      console.log(err);
-      console.log(user);
+
       if (!user || !user.id) {
         return this.props.history.push('/login/');
       }
@@ -643,15 +636,15 @@ class Gamelist extends Component {
       this.componentDidMount()
 
     });
-    console.log(this.state.response);
+
 
   }
 
   callApi = async () => {
-    console.log(cookies.get('user'));
+
     let userAuth = cookies.get('user');
-    console.log(userAuth);
-    const response = await fetch(`https://87.248.16.163:15004/gamelist/${this.props.match.params.id}`, {headers: userAuth});
+
+    const response = await fetch(`http://87.248.16.163:15004/gamelist/${this.props.match.params.id}`, {headers: userAuth});
     if (response.status !== 200) {
       throw Error(response.message);
     }
@@ -659,14 +652,13 @@ class Gamelist extends Component {
     const body = await response.json();
     if (response.status !== 200)
 
-      console.log(body);
     return body;
   };
 
   onSubmit = (event) => {
     event.preventDefault();
-    console.log("new game");
-    fetch(`https://87.248.16.163:15004/gamelist/${this.props.match.params.id}`, {
+
+    fetch(`http://87.248.16.163:15004/gamelist/${this.props.match.params.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -750,7 +742,7 @@ class Gamelist extends Component {
                         var date = "no date specified"
                       }
                     } {
-                      console.log("date", game.date)
+
                     }
                     return (<tr>
                       <td key={game.id}>{game.id}
@@ -823,59 +815,54 @@ class GameDetails extends Component {
 
   componentDidMount() {
     this.callApi().then(res => {
-      console.log("res:", res);
+
       this.setState({response: res});
-      console.log(res);
+
       this.dice.attempts = res.attempts;
-      console.log(this.state.response);
-      console.log(this.dice);
+
       this.dice.terninger = [];
       this.dice.savedDice = [];
       var diceLoad = [];
       var saveDiceLoad = [];
-      console.log(this.state.response);
-      console.log(this.state.response[this.state.response[0].round].savedDice)
+
       if (this.state.response[this.state.response[0].round].boardDice) {
         diceLoad = this.state.response[this.state.response[0].round].boardDice.split(",");
-        console.log(diceLoad);
+
 
       }
       if (this.state.response[this.state.response[0].round].savedDice) {
         saveDiceLoad = this.state.response[this.state.response[0].round].savedDice.split(",");
       }
-      console.log(saveDiceLoad.length);
+
       diceLoad.map(dice => {
         this.dice.terninger.push(parseInt(dice))
       });
       saveDiceLoad.map(dice => {
         this.dice.savedDice.push(parseInt(dice))
       });
-      console.log(saveDiceLoad);
-      console.log(diceLoad);
-      console.log(this.dice);
+
       this.setState({
         terninger: this.dice.terninger,
         savedDice: this.dice.savedDice
       }, () => {
-        console.log(this.state);
+
       })
 
       socket.on('reloadGame', test => {
-        console.log("reloading", test);
+
         this.componentDidMount();
-        console.log("reloading");
+
         this.callApi().then(res => {
-          console.log("res:", res);
+
           this.setState({response: res});
-          console.log(res);
+
           this.dice.attempts = res.attempts;
-          console.log(this.state.response);
-          console.log(this.dice);
+
           this.dice.terninger = [];
           this.dice.savedDice = [];
           var diceLoad = [];
           var saveDiceLoad = [];
-          console.log(this.state.response[this.state.response[0].round].savedDice)
+
           if (this.state.response[this.state.response[0].round].boardDice) {
             diceLoad = this.state.response[this.state.response[0].round].boardDice.split(",");
 
@@ -883,29 +870,26 @@ class GameDetails extends Component {
           if (this.state.response[this.state.response[0].round].savedDice) {
             saveDiceLoad = this.state.response[this.state.response[0].round].savedDice.split(",");
           }
-          console.log(saveDiceLoad.length);
+
           diceLoad.map(dice => {
             this.dice.terninger.push(parseInt(dice))
           });
           saveDiceLoad.map(dice => {
             this.dice.savedDice.push(parseInt(dice))
           });
-          console.log(saveDiceLoad);
-          console.log(diceLoad);
-          console.log(this.dice);
+
           this.setState({
             terninger: this.dice.terninger,
             savedDice: this.dice.savedDice
           }, () => {
-            console.log(this.state);
+
           })
           this.calculateResult();
 
         }).catch(err => {
-          console.log("You do not have access to this game");
+
           var user = cookies.get('user');
-          console.log(err);
-          console.log(user);
+
           if (!user || !user.id) {
             return this.props.history.push('/login/');
           }
@@ -917,10 +901,10 @@ class GameDetails extends Component {
       })
 
     }).catch(err => {
-      console.log("You do not have access to this game");
+
       var user = cookies.get('user');
       console.log(err);
-      console.log(user);
+
       if (!user || !user.id) {
         return this.props.history.push('/login/');
       }
@@ -933,32 +917,31 @@ class GameDetails extends Component {
 
   rollDice() {
 
-    console.log(cookies.get('user').id,)
+
     if (cookies.get('user').id == this.state.response[this.state.response[0].round].player) {
-      console.log(this.state);
+
 
       if (this.state.response[this.state.response[0].round].attempts <= 0) {
         return (window.alert("out of attempts, save your round by clicking one of the empty fields in the scoreboard"))
       }
       this.dice.terninger = [];
-      console.log(this.state.response[this.state.response[0].round].id)
+
 
       for (var i = 0; i < this.dice.uvalgt; i++) {
         this.dice.terninger.push(Math.ceil(Math.random() * 6));
       }
       this.dice.attempts--;
       if (this.dice.attempts == 0) {
-        console.log(this.dice.terninger.length);
+
         for (var i = 0; i < this.dice.terninger.length; i++) {
-          console.log(this.dice.terninger[i]);
-          console.log(i);
+
           this.dice.savedDice.push(this.dice.terninger[i]);
 
-          console.log(this.dice.terninger)
+
         }
         this.dice.terninger = [];
       }
-      fetch(`httpss://87.248.16.163:15004/storeattempt`, {
+      fetch(`http://87.248.16.163:15004/storeattempt`, {
         method: 'PUT',
         body: JSON.stringify({
           id: this.state.response[this.state.response[0].round].id,
@@ -980,7 +963,7 @@ class GameDetails extends Component {
 
   calculateResult() {
     var terningVerdier = this.state.savedDice;
-    console.log(terningVerdier);
+
 
     // Resetter verdiene
     var ones = 0;
@@ -1161,20 +1144,20 @@ class GameDetails extends Component {
   }
   logOut() {
     cookies.remove('user', {path: '/'});
-    console.log(cookies.user);
+
     this.props.history.push('/login');
   }
 
   saveDice(diceIndex) {
     if (cookies.get('user').id == this.state.response[this.state.response[0].round].player) {
-    console.log(this.dice.attempts);
+
     var test = diceIndex.index;
     this.dice.savedDice.push(this.dice.terninger[diceIndex.index])
     this.dice.terninger.splice(diceIndex.index, 1);
 
     this.dice.uvalgt = this.dice.terninger.length;
 
-    fetch(`httpss://87.248.16.163:15004/storedice`, {
+    fetch(`http://87.248.16.163:15004/storedice`, {
       method: 'PUT',
       body: JSON.stringify({
         id: this.state.response[this.state.response[0].round].multiplayerid,
@@ -1191,12 +1174,12 @@ class GameDetails extends Component {
   }
   removeDice(diceIndex) {
       if (cookies.get('user').id == this.state.response[this.state.response[0].round].player) {
-    console.log(this.dice.attempts);
+
     var test = diceIndex.index;
     this.dice.terninger.push(this.dice.savedDice[diceIndex.index])
     this.dice.savedDice.splice(diceIndex.index, 1);
     this.dice.uvalgt = this.dice.terninger.length;
-    fetch(`httpss://87.248.16.163:15004/storedice`, {
+    fetch(`http://87.248.16.163:15004/storedice`, {
       method: 'PUT',
       body: JSON.stringify({
         id: this.state.response[this.state.response[0].round].multiplayerid,
@@ -1213,18 +1196,18 @@ class GameDetails extends Component {
   }
   saveRound(value) {
     this.updateVariable.player = cookies.get('user').id;
-    console.log(this.updateVariable.player);
+
     this.updateVariable.mpid = this.state.response[this.state.response[0].round].multiplayerid;
     this.updateVariable.field = value;
     this.updateVariable.value = this.results[value];
-    console.log(this.updateVariable)
+
     if (!this.state.response[value] && this.state.response[value] != 0) {
-      console.log("Cell is empty, registering round:")
+
       this.dice.terninger = [];
       this.dice.savedDice = [];
       this.dice.uvalgt = 5;
-      console.log(this.dice.attempts);
-      fetch(`httpss://87.248.16.163:15004/game/${this.props.match.params.id}`, {
+
+      fetch(`http://87.248.16.163:15004/game/${this.props.match.params.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -1236,21 +1219,21 @@ class GameDetails extends Component {
         var image = "dice1";
       }
       const timer = setTimeout(() => {
-        console.log("executing reload in 5 seconds");
+
 
         this.componentDidMount();
       }, 1500);
       return() => clearTimeout(timer);
 
     } else {
-      console.log("ikke tom");
+
       return;
     }
   }
 
   handleSubmit = async e => {
     e.preventDefault();
-    const response = await fetch(`httpss://87.248.16.163:15004/game/${this.props.match.params.id}`, {
+    const response = await fetch(`http://87.248.16.163:15004/game/${this.props.match.params.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -1258,19 +1241,18 @@ class GameDetails extends Component {
       body: JSON.stringify({post: this.state.post})
     });
     const body = await response.text();
-    console.log(body);
+
     this.setState({responseToPost: body});
   };
 
   callApi = async () => {
     let userAuth = cookies.get('user');
-    const response = await fetch(`httpss://87.248.16.163:15004/game/${this.props.match.params.id}`, {headers: userAuth});
-    console.log(response);
+    const response = await fetch(`http://87.248.16.163:15004/game/${this.props.match.params.id}`, {headers: userAuth});
+
     const body = await response.json();
     if (response.status !== 200)
       throw Error(body.message);
 
-    console.log(body);
     return body;
   };
 
@@ -1500,7 +1482,7 @@ class GameDetails extends Component {
 
         {
           this.state.response.map((game) => {
-            console.log(game);
+
             return (<Card>
               <Card.Title>{game.username}
                 Scoreboard</Card.Title>

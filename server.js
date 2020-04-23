@@ -14,10 +14,10 @@ const mc = mysql.createPool({
 });
 //app.listen(process.env.PORT || 15004);
 console.log(fs.readFileSync('server.key'));
-const server = require('https').createServer({key: fs.readFileSync('server.key'), cert: fs.readFileSync('server.cert')}, app);
+const server = require('http').createServer({key: fs.readFileSync('server.key'), cert: fs.readFileSync('server.cert')}, app);
 const io = require('socket.io')(server);
 server.listen(process.env.PORT || 15004);
-const whitelist = ['https://localhost:3000', 'https://testyatzyoy.herokuapp.com', 'https://192.168.1.71:3000'];
+const whitelist = ['http://localhost:3000', 'http://testyatzyoy.herokuapp.com', 'http://192.168.1.71:3000'];
 const corsOptions = {
   credentials: true, // This is important.
   origin: (origin, callback) => {
