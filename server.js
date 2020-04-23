@@ -17,7 +17,7 @@ console.log(fs.readFileSync('server.key'));
 const server = require('http').createServer({key: fs.readFileSync('server.key'), cert: fs.readFileSync('server.cert')}, app);
 const io = require('socket.io')(server);
 server.listen(process.env.PORT || 15004);
-const whitelist = ['http://localhost:3000', 'http://testyatzyoy.herokuapp.com', 'http://192.168.1.71:3000'];
+const whitelist = ['*', 'http://localhost:3000', 'http://testyatzyoy.herokuapp.com', 'http://192.168.1.71:3000'];
 const corsOptions = {
   credentials: true, // This is important.
   origin: (origin, callback) => {
@@ -90,7 +90,8 @@ app.get('/gamelist/:id', function (req, res) {
 
           mc.query('SELECT * FROM scoreboards WHERE player=? ORDER BY date desc', [req.params.id], function(err, results3, fields) {
             if(err) throw err;
-
+            console.log("correctpw");
+            console.log(results3);
             return res.send(200, results3);
           })
 
@@ -377,7 +378,7 @@ app.post('/api/register', (req, res) => {
     if(err) throw err;
     mc.query(`SELECT * FROM users WHERE username = (?)`, [req.body.email], function(err, results, fields) {
         if(err) throw err;
-        console.log("pepega", results[0], results[0].password);
+        console.log("pepega2", results[0], results[0].password);
         return res.status(200).cookie('user', results[0]).json({
               success:true,
               redirectUrl: `../gamelist/${results[0].id}`

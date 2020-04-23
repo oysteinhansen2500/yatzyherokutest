@@ -99,12 +99,12 @@ socket.emit('subscribeToTimer', 1000);
     if (response.status !== 200)
       throw Error(body.message);
 
-
+    console.log(body);
     return body;
   };
 
   logState = async () => {
-
+    console.log("state:", this.state.response);
   }
 
   handleSubmit = async e => {
@@ -228,7 +228,7 @@ class LoginAuth extends Component {
   componentDidMount() {
 
     this.callApi().then(res => {
-
+      console.log("res:", res[0].salt);
       this.setState({
         salt: res[0].salt
       }, function() {
@@ -236,9 +236,9 @@ class LoginAuth extends Component {
       });
 
     }).catch(err => {
-
+      console.log("You do not have access to this gamelist");
       var user = cookies.get('user');
-
+      console.log(err);
 
 
       //  this.props.history.push(`/login/${this.props.match.params.id}`);
@@ -290,7 +290,7 @@ class LoginAuth extends Component {
       }
 
     }).catch(err => {
-
+      console.log(err);
 
       var user = cookies.get('user');
 
@@ -392,7 +392,7 @@ class Login extends Component {
   onSubmit = async (event) => {
     event.preventDefault();
 
-
+    console.log(JSON.stringify({email: this.state.email}))
     fetch('http://87.248.16.163:15004/api/login', {
       method: 'POST',
       body: JSON.stringify({email: this.state.email}),
@@ -427,7 +427,7 @@ class Login extends Component {
               if (!cookies.get('user')) {
                 cookies.set('user', {username: messages.username, password: messages.password, id: messages.id, salt: messages.salt, }, {path: '/'})
               }
-
+              console.log(messages.redirectUrl);
               if (messages.redirectUrl) {
                 this.props.history.push(messages.redirectUrl);
               }
@@ -650,7 +650,6 @@ class Gamelist extends Component {
     }
 
     const body = await response.json();
-    if (response.status !== 200)
 
     return body;
   };
@@ -742,7 +741,7 @@ class Gamelist extends Component {
                         var date = "no date specified"
                       }
                     } {
-
+                      console.log("date", game.date)
                     }
                     return (<tr>
                       <td key={game.id}>{game.id}
@@ -850,7 +849,7 @@ class GameDetails extends Component {
 
       socket.on('reloadGame', test => {
 
-        this.componentDidMount();
+
 
         this.callApi().then(res => {
 
@@ -903,7 +902,6 @@ class GameDetails extends Component {
     }).catch(err => {
 
       var user = cookies.get('user');
-      console.log(err);
 
       if (!user || !user.id) {
         return this.props.history.push('/login/');
@@ -1226,7 +1224,7 @@ class GameDetails extends Component {
       return() => clearTimeout(timer);
 
     } else {
-
+      console.log("ikke tom");
       return;
     }
   }
@@ -1253,6 +1251,7 @@ class GameDetails extends Component {
     if (response.status !== 200)
       throw Error(body.message);
 
+
     return body;
   };
 
@@ -1269,7 +1268,7 @@ class GameDetails extends Component {
             <DropdownButton variant="outline-primary" id="dropdown-item-button" title="Need help? Click here to see how to play">
               <h5 className="block-example border border-dark" style={{
                   padding: "1rem"
-                }}>How to play yatzy: You have threww throws every round. To throw the dice click on the "Throw dice" button in the top left corner. The red box will contain the dice currently being thrown. If you click any of the dice you will move it to the green box, which won't be affected by a rethrow. Once you are happy with your dice or you are out of throws you can click on the row you would like to save the results in. This will lock this column for the rest of the game.</h5>
+                }}>How to play yatzy: You have three throws every round. To throw the dice click on the "Throw dice" button right above the scoreboards. The red box will contain the dice currently being thrown. If you click any of the dice you will move it to the green box, which won't be affected by a rethrow. Once you are happy with your dice or you are out of throws you can click on the row you would like to save the results in. This will lock this column for the rest of the game. After saving your round the top table is automatically changed to the current player playing, and a new round will start.</h5>
             </DropdownButton>
           </Nav>
           <Nav>
@@ -1366,9 +1365,9 @@ class GameDetails extends Component {
             attempts remaining</Button>
         </Card.Header>
 
-        <Card>
+        <Card style={{border: "solid 4px lightgrey", background:"skyblue"}}>
           <Card.Title>{this.state.response[this.state.response[0].round].username}
-            Scoreboard</Card.Title>
+            Scoreboard (Currently playing)</Card.Title>
           <Table variant="dark" striped="striped" bordered="bordered" hover="hover">
             <tbody>
               <tr onClick={() => this.saveRound('ones')}>
@@ -1389,7 +1388,7 @@ class GameDetails extends Component {
                 <td className="td">Threes</td>
                 <div className="td2">
                   <td id="threes" className="td noborder">{this.state.response[this.state.response[0].round].threes}</td>
-                  <td className="cursive">({this.results.fours})</td>
+                  <td className="cursive">({this.results.threes})</td>
                 </div>
               </tr>
               <tr onClick={() => this.saveRound('fours')}>
@@ -1599,117 +1598,6 @@ class GameDetails extends Component {
           })
         }
 
-        <Card>
-          <Table variant="dark" striped="striped" bordered="bordered" hover="hover">
-            <tbody>
-              <tr onClick={() => this.saveRound('ones')}>
-                <td className="td">Ones</td>
-                <div className="td2">
-                  <td id="ones" className="td noborder">{this.state.response.ones}</td>
-                  <td className="cursive">({this.results.ones})</td>
-                </div>
-              </tr>
-              <tr onClick={() => this.saveRound('twos')}>
-                <td className="td">Twos</td>
-                <div className="td2">
-                  <td id="twos" className="td noborder">{this.state.response.twos}</td>
-                  <td className="cursive">({this.results.twos})</td>
-                </div>
-              </tr>
-              <tr onClick={() => this.saveRound('threes')}>
-                <td className="td">Threes</td>
-                <div className="td2">
-                  <td id="threes" className="td noborder">{this.state.response.threes}</td>
-                  <td className="cursive">({this.results.fours})</td>
-                </div>
-              </tr>
-              <tr onClick={() => this.saveRound('fours')}>
-                <td className="td">Fours</td>
-                <div className="td2">
-                  <td id="fours" className="td noborder">{this.state.response.fours}</td>
-                  <td className="cursive">({this.results.fours})</td>
-                </div>
-              </tr>
-              <tr onClick={() => this.saveRound('fives')}>
-                <td className="td">Fives</td>
-                <div className="td2">
-                  <td id="fives" className="td noborder">{this.state.response.fives}</td>
-                  <td className="cursive">({this.results.fives})</td>
-                </div>
-              </tr>
-              <tr onClick={() => this.saveRound('sixes')}>
-                <td className="td">Sixes</td>
-                <div className="td2">
-                  <td id="sixes" className="td noborder">{this.state.response.sixes}</td>
-                  <td className="cursive">({this.results.sixes})</td>
-                </div>
-              </tr>
-              <tr onClick={() => this.saveRound('one_pair')}>
-                <td className="td">One Pair</td>
-                <div className="td2">
-                  <td id="one_pair" className="td noborder">{this.state.response.one_pair}</td>
-                  <td className="cursive">({this.results.one_pair})</td>
-                </div>
-              </tr>
-              <tr onClick={() => this.saveRound('two_pairs')}>
-                <td className="td">Two pairs</td>
-                <div className="td2">
-                  <td id="two_pairs" className="td noborder">{this.state.response.two_pairs}</td>
-                  <td className="cursive">({this.results.two_pairs})</td>
-                </div>
-              </tr>
-              <tr onClick={() => this.saveRound('triplet')}>
-                <td className="td">Triplets</td>
-                <div className="td2">
-                  <td id="triplet" className="td noborder">{this.state.response.triplet}</td>
-                  <td className="cursive">({this.results.triplet})</td>
-                </div>
-              </tr>
-              <tr className="test" onClick={() => this.saveRound('four_of_a_kind')}>
-                <td className="td">Four of a kind</td>
-                <div className="td2">
-                  <td id="four_of_a_kind" className="td noborder">{this.state.response.four_of_a_kind}</td>
-                  <td className="cursive">({this.results.four_of_a_kind})</td>
-                </div>
-              </tr>
-              <tr onClick={() => this.saveRound('small_straight')}>
-                <td className="td">Small Straight</td>
-                <div className="td2">
-                  <td id="small_straight" className="td noborder">{this.state.response.small_straight}</td>
-                  <td className="cursive">({this.results.small_straight})</td>
-                </div>
-              </tr>
-              <tr onClick={() => this.saveRound('large_straight')}>
-                <td className="td">Large Straight</td>
-                <div className="td2">
-                  <td id="large_straight" className="td noborder">{this.state.response.large_straight}</td>
-                  <td className="cursive">({this.results.large_straight})</td>
-                </div>
-              </tr>
-              <tr onClick={() => this.saveRound('chance')}>
-                <td className="td">Chance</td>
-                <div className="td2">
-                  <td id="chance" className="td noborder">{this.state.response.chance}</td>
-                  <td className="cursive">({this.results.chance})</td>
-                </div>
-              </tr>
-              <tr onClick={() => this.saveRound('Yatzy')}>
-                <td className="td">Yatzy</td>
-                <div className="td2">
-                  <td id="yatzy" className="td noborder">{this.state.response.yatzy}</td>
-                  <td className="cursive">({this.results.Yatzy})</td>
-                </div>
-              </tr>
-              <tr onClick={() => this.saveRound('full_house')}>
-                <td className="td">Full house</td>
-                <div className="td2">
-                  <td id="full_house" className="td noborder">{this.state.response.full_house}</td>
-                  <td className="cursive">({this.results.full_house})</td>
-                </div>
-              </tr>
-            </tbody>
-          </Table>
-        </Card>
 
       </Container>);
     }
